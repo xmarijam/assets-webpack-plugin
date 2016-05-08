@@ -1,12 +1,58 @@
-var merge = require('lodash.merge')
+const merge = require('lodash.merge')
+const {getAssetKind} = require('./src/utils')
+const isHMRUpdate = require('./src/isHMRUpdate')
+const isSourceMap = require('./src/isSourceMap')
+const createQueuedWriter = require('./src/createQueuedWriter')
+const createOutputWriter = require('./src/createOutputWriter')
 
-var getAssetKind = require('./lib/getAssetKind')
-var isHMRUpdate = require('./lib/isHMRUpdate')
-var isSourceMap = require('./lib/isSourceMap')
-
-var createQueuedWriter = require('./lib/output/createQueuedWriter')
-var createOutputWriter = require('./lib/output/createOutputWriter')
-
+/**
+ * @class
+ *
+ * @summary The plugin class
+ *
+ * @description
+ * Creates an instance of a webpack plugin. Accepts
+ * an optional options object.
+ *
+ * The plugin adds 'after-emit' hook to webpack and reads
+ * build stats. It writes JSON file with paths to entry points
+ * according to * webpack setup ([output option] in webpack config).
+ *
+ *   {
+ *     "landing": {
+ *       "js": "/assets/js/landing-561a78bc2881c321f384.js",
+ *       "css": "/assets/css/landing-j7f3odbc2f81c3f4ad00.css"
+ *     },
+ *     "app": {
+ *       "js": "/assets/js/app-i4937c9f746590dj473g.js",
+ *     }
+ *   }
+ *
+ * [output option]: https://webpack.js.org/configuration/output/
+ *
+ * @param {Object} [options] - the object with options
+ * @param {string} [options.filename='webpack-assets.json']
+ *   - name for the created JSON file
+ * @param {boolean} [options.fullPath=true]
+ *   - if false the output will not include the full path
+ *   of the generated file, just bare file names
+ * @param {boolean} [options.includeManifest=false]
+ *   - allows to include CommonsChunkPlugin's run time code
+ *   as a text, so that it can be inlined into the template
+ *   []: https://webpack.js.org/guides/code-splitting-libraries/#manifest-file
+ * @param {string} [options.path=process.cwd()]
+ *   - path where to save the created JSON file.
+ * @param {boolean} [options.prettyPrint=false]
+ *   - whether to format the JSON output for readability.
+ * @param {Function} [options.processOutput=JSON.stringify]
+ *   - post-processor function that accepts assets paths as an object
+ *   and produces a content for the JSON file.
+ * @param {boolean} [options.update=false]
+ *   - if true JSON file will be updated instead of overwritten
+ * @param {metadata} [options.metadata]
+ *   - inject metadata into the output file.
+ *   All values will be injected into the key "metadata".
+ */
 function AssetsWebpackPlugin (options) {
   this.options = merge({}, {
     path: '.',
@@ -62,7 +108,7 @@ AssetsWebpackPlugin.prototype = {
             return typeMap
           }
 
-          var typeName = getAssetKind(options, asset)
+          var typeName = getAssetKind(asset)
           typeMap[typeName] = assetPath + asset
 
           return typeMap

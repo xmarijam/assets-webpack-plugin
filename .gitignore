@@ -1,3 +1,6 @@
 node_modules
 dist
 tmp
+npm-debug.log
+.nyc_output
+coverage
