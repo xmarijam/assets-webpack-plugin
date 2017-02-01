@@ -14,10 +14,6 @@ This change log follows the format documented in [Keep a CHANGELOG].
 
 ### Added
 
-- Support for source maps when `includeManifest` option is set.
-
-### Added
-
 - `includeManifest` option (kudos to Matt Krick [@mattkrick](https://github.com/mattkrick)).
   [See docs](./README.md#includemanifest) for more details.
 

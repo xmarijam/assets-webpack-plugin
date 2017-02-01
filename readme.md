@@ -102,7 +102,7 @@ You can pass the following options:
 
 #### `filename`
 
-Optional. `webpack-assets.json` by default.
+Optinal. `webpack-assets.json` by default.
 
 Name for the created json file.
 
@@ -112,7 +112,7 @@ new AssetsPlugin({filename: 'assets.json'})
 
 #### `fullPath`
 
-Optional. `true` by default.
+Optinal. `true` by default.
 
 If `false` the output will not include the full path
 of the generated file.
@@ -184,7 +184,7 @@ new AssetsPlugin({
 
 #### `update`
 
-Optional. `false` by default.
+Optinal. `false` by default.
 
 When set to `true`, the output JSON file will be updated instead of overwritten.
 
